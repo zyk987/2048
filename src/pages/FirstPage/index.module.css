@@ -1,0 +1,41 @@
+.container {
+  background-color: #faf8ee;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 400rpx 0;
+  box-sizing: border-box;
+}
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+}
+.load {
+  text-align: center;
+  margin-top: 30px;
+  display: flex;
+  width: 200rpx;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.empty {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+.light {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 4px;
+  margin: 0 5px;
+  background-color: #ccc;
+  color: red;
+}
