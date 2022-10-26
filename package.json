@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@uni/navigate": "^1.0.10",
+    "classnames": "^2.3.2",
     "rax": "^1.1.0",
     "rax-document": "^0.1.0",
     "rax-image": "^2.0.0",

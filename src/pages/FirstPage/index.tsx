@@ -3,7 +3,7 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import navigate from '@uni/navigate';
 
-import logo from '../../assets/logo.png';
+import logo from '../../../public/logo.png';
 
 import styles from './index.module.css';
 
