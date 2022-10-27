@@ -2,22 +2,20 @@ import Board from './grid';
 
 class Main {
   size: number;
-  startData: number;
   board: Board;
   constructor(size: number) {
     this.size = size;
-    this.startData = 2;
     this.init();
   }
 
   init() {
     this.board = new Board(this.size);
-    this.setDataRandom();
+    this.setDataRandom(2);
   }
 
   /** 随机填充 */
-  setDataRandom() {
-    for (let i = 0; i < this.startData; i++) {
+  setDataRandom(size?: number) {
+    for (let i = 0; i < (size || 1); i++) {
       this.addRandomData();
     }
   }
@@ -104,7 +102,7 @@ class Main {
 
     for (let i = 0; i < this.size; i++) {
       for (let j = 1; j < this.size; j++) {
-        if (list[i][j - 1] == list[i][j] && list[i][j] != '') {
+        if (list[i][j - 1] === list[i][j] && list[i][j] !== '') {
           list[i][j - 1] += list[i][j];
           list[i][j] = '';
         }
@@ -134,13 +132,13 @@ class Main {
       // 左右不等
       for (let i = 0; i < this.size; i++) {
         for (let j = 1; j < this.size; j++) {
-          if (this.board.grid[i][j] == this.board.grid[i][j - 1]) return false;
+          if (this.board.grid[i][j] === this.board.grid[i][j - 1]) return false;
         }
       }
       // 上下不等
       for (let j = 0; j < this.size; j++) {
         for (let i = 1; i < this.size; i++) {
-          if (this.board.grid[i][j] == this.board.grid[i - 1][j]) return false;
+          if (this.board.grid[i][j] === this.board.grid[i - 1][j]) return false;
         }
       }
     }

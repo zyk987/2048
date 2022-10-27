@@ -13,10 +13,10 @@ let touchEndY = 0;
 function MainPage() {
   const [start, setStart] = useState('开始游戏');
   const mainRef = useRef<Main>();
-  const [hidden, setHidden] = useState(false);
   const [over, setOver] = useState(false);
   const [score, setScore] = useState(0);
   const [num, setNum] = useState<Array<Array<string | number>>>([[]]);
+  const [endMsg, setEndMsg] = useState('');
 
   const touchStart = (e) => {
     const touch = e.touches[0];
@@ -65,16 +65,23 @@ function MainPage() {
     const main = new Main(4);
     mainRef.current = main;
     setStart('重新开始');
+    setOver(false);
     setNum(main.board.grid);
   };
 
   const gameOver = () => {
-    console.log('over');
+    setOver(true);
+    if (score >= 2048) {
+      setEndMsg('恭喜达到2048!');
+    } else {
+      setEndMsg('游戏结束!');
+    }
   };
 
   useEffect(() => {
     gameStart();
   }, []);
+
   return (
     <View className={styles.container}>
       <View className={styles.head}>
@@ -100,12 +107,13 @@ function MainPage() {
             </View>
           ))}
         </View>
-
-        {/* <View className={game - over}>
-          <Text className={nowScore}>历史最高分：{bestScore}</Text>
-          <Text className={nowScore}>本次成绩：{score}</Text>
-          <Text className={pro}>{endMsg}</Text>
-        </View> */}
+        {over && (
+          <View className={styles.boardMask}>
+            {/* <Text className={styles.nowScore}>历史最高分：{bestScore}</Text> */}
+            <Text className={styles.nowScore}>本次成绩：{score}</Text>
+            <Text className={styles.msg}>{endMsg}</Text>
+          </View>
+        )}
       </View>
     </View>
   );
