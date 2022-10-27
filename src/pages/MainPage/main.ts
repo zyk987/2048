@@ -58,6 +58,8 @@ class Main {
           case 3:
             result[i][j] = list[i][j];
             break;
+          default:
+            break;
         }
       }
     }
@@ -85,6 +87,8 @@ class Main {
           case 3:
             list[i].push(this.board.grid[i][j]);
             break;
+          default:
+            break;
         }
       }
     }
@@ -93,11 +97,8 @@ class Main {
 
   combine(list) {
     // 滑动时相同的合并
-    for (
-      let i = 0;
-      i < list.length;
-      i++ // 数字靠边
-    ) {
+    // 数字靠边
+    for (let i = 0; i < list.length; i++) {
       list[i] = this.changeItem(list[i]);
     }
 
@@ -109,11 +110,8 @@ class Main {
         }
       }
     }
-    for (
-      let i = 0;
-      i < list.length;
-      i++ // 再次数字靠边
-    ) {
+    // 再次数字靠边
+    for (let i = 0; i < list.length; i++) {
       list[i] = this.changeItem(list[i]);
     }
 
@@ -133,20 +131,14 @@ class Main {
     if (!this.board.cellEmpty()) {
       return false;
     } else {
-      for (
-        let i = 0;
-        i < this.size;
-        i++ // 左右不等
-      ) {
+      // 左右不等
+      for (let i = 0; i < this.size; i++) {
         for (let j = 1; j < this.size; j++) {
           if (this.board.grid[i][j] == this.board.grid[i][j - 1]) return false;
         }
       }
-      for (
-        let j = 0;
-        j < this.size;
-        j++ // 上下不等
-      ) {
+      // 上下不等
+      for (let j = 0; j < this.size; j++) {
         for (let i = 1; i < this.size; i++) {
           if (this.board.grid[i][j] == this.board.grid[i - 1][j]) return false;
         }

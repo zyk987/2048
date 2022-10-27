@@ -1,37 +1,80 @@
-import { createElement, useEffect, useState } from 'rax';
+import { createElement, useEffect, useRef, useState } from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import styles from './index.module.css';
 import Main from './main';
 import classNames from 'classnames';
 
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
 function MainPage() {
   const [start, setStart] = useState('开始游戏');
+  const mainRef = useRef<Main>();
   const [hidden, setHidden] = useState(false);
   const [over, setOver] = useState(false);
   const [score, setScore] = useState(0);
   const [num, setNum] = useState<Array<Array<string | number>>>([[]]);
 
   const touchStart = (e) => {
-    console.log('start');
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  };
+  const touchMove = (e) => {
+    const touch = e.touches[0];
+    touchEndX = touch.clientX;
+    touchEndY = touch.clientY;
   };
   const touchEnd = () => {
-    console.log('end');
+    const disX = touchStartX - touchEndX;
+    const absdisX = Math.abs(disX);
+    const disY = touchStartY - touchEndY;
+    const absdisY = Math.abs(disY);
+
+    if (mainRef.current?.isOver()) {
+      gameOver();
+    } else if (Math.max(absdisX, absdisY) > 10) {
+      // 0：向上、1：向右、2：向下、3：向左
+      let direction;
+      if (absdisX > absdisY) {
+        direction = disX < 0 ? 1 : 3;
+      } else {
+        direction = disY < 0 ? 2 : 0;
+      }
+      const data = mainRef.current?.move(direction);
+      updateView(data);
+    }
   };
-  const touchMove = () => {
-    console.log('move');
+
+  const updateView = (data) => {
+    let max = 0;
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        if (data[i][j] !== '' && data[i][j] > max) max = data[i][j];
+      }
+    }
+    setNum(data);
+    setScore(max);
   };
 
   const gameStart = () => {
     // 游戏开始
     const main = new Main(4);
+    mainRef.current = main;
     setStart('重新开始');
     setNum(main.board.grid);
   };
 
-  // useEffect(() => {
-  //   gameStart();
-  // }, []);
+  const gameOver = () => {
+    console.log('over');
+  };
+
+  useEffect(() => {
+    gameStart();
+  }, []);
   return (
     <View className={styles.container}>
       <View className={styles.head}>
