@@ -3,9 +3,11 @@ import Board from './grid';
 class Main {
   size: number;
   board: Board;
+  changeTimes: number;
   constructor(size: number) {
     this.size = size;
     this.init();
+    this.changeTimes = 0;
   }
 
   init() {
@@ -61,8 +63,10 @@ class Main {
         }
       }
     }
+
     this.board.grid = result;
-    this.setDataRandom();
+    if (this.changeTimes > 0) this.setDataRandom();
+    this.changeTimes = 0;
 
     return result;
   }
@@ -105,6 +109,7 @@ class Main {
         if (list[i][j - 1] === list[i][j] && list[i][j] !== '') {
           list[i][j - 1] += list[i][j];
           list[i][j] = '';
+          this.changeTimes += 1;
         }
       }
     }
@@ -118,10 +123,17 @@ class Main {
 
   changeItem(item) {
     // 将 ['', 2, '', 2] 改为 [2, 2, '', '']
+    const res: Array<string | number> = [];
     let cnt = 0;
-    for (let i = 0; i < item.length; i++) if (item[i] !== '') item[cnt++] = item[i];
-    for (let j = cnt; j < item.length; j++) item[j] = '';
-    return item;
+    for (let i = 0; i < item.length; i++) if (item[i] !== '') res[cnt++] = item[i];
+    for (let j = cnt; j < item.length; j++) res[j] = '';
+
+    res.forEach((num: string | number, index: number) => {
+      if (num !== item[index]) {
+        this.changeTimes += 1;
+      }
+    });
+    return res;
   }
 
   isOver() {

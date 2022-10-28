@@ -99,10 +99,15 @@ function MainPage() {
 
       <View className={styles.game}>
         <View className={styles.board} onTouchStart={touchStart} onTouchEnd={touchEnd} onTouchMove={touchMove}>
-          {num.map((row: Array<number | number>) => (
-            <View className={styles.row}>
-              {row.map((col: number | string) => (
-                <View className={classNames({ [styles.cell]: true, [styles[`cellTypeOf${col}`]]: true })}>{col}</View>
+          {num.map((row: Array<number | number>, index: number) => (
+            <View className={styles.row} key={`row${index}`}>
+              {row.map((col: number | string, i: number) => (
+                <View
+                  className={classNames({ [styles.cell]: true, [styles[`cellTypeOf${col}`]]: true })}
+                  key={`col${i}`}
+                >
+                  {col}
+                </View>
               ))}
             </View>
           ))}
