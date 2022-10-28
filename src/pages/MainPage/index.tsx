@@ -4,6 +4,7 @@ import Text from 'rax-text';
 import styles from './index.module.css';
 import Main from './main';
 import classNames from 'classnames';
+import { GridAttribute } from './grid';
 
 let touchStartX = 0;
 let touchStartY = 0;
@@ -15,7 +16,7 @@ function MainPage() {
   const mainRef = useRef<Main>();
   const [over, setOver] = useState(false);
   const [score, setScore] = useState(0);
-  const [num, setNum] = useState<Array<Array<string | number>>>([[]]);
+  const [num, setNum] = useState<GridAttribute[][]>([[]]);
   const [endMsg, setEndMsg] = useState('');
 
   const touchStart = (e) => {
@@ -45,15 +46,15 @@ function MainPage() {
         direction = disY < 0 ? 2 : 0;
       }
       const data = mainRef.current?.move(direction);
-      updateView(data);
+      if (data) updateView(data);
     }
   };
 
-  const updateView = (data) => {
+  const updateView = (data: GridAttribute[][]) => {
     let max = 0;
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
-        if (data[i][j] !== '' && data[i][j] > max) max = data[i][j];
+        if (data[i][j].value !== '' && data[i][j].value > max) max = data[i][j].value as number;
       }
     }
     setNum(data);
@@ -99,14 +100,26 @@ function MainPage() {
 
       <View className={styles.game}>
         <View className={styles.board} onTouchStart={touchStart} onTouchEnd={touchEnd} onTouchMove={touchMove}>
-          {num.map((row: Array<number | number>, index: number) => (
-            <View className={styles.row} key={`row${index}`}>
-              {row.map((col: number | string, i: number) => (
+          {num.map((row: GridAttribute[], i: number) => (
+            <View className={styles.row} key={`row${i}`}>
+              {row.map((col: GridAttribute, j: number) => (
                 <View
-                  className={classNames({ [styles.cell]: true, [styles[`cellTypeOf${col}`]]: true })}
-                  key={`col${i}`}
+                  className={styles.col}
+                  style={{
+                    top: `${(j + 1) * 20 + 140 * j}rpx`,
+                    left: `${(i + 1) * 20 + 140 * i}rpx`,
+                  }}
+                  key={`col${j}`}
                 >
-                  {col}
+                  <View
+                    className={classNames({
+                      [styles.cell]: true,
+                      [styles[`cellTypeOf${col.value}`]]: true,
+                      [styles.newCell]: col.status === 'new',
+                    })}
+                  >
+                    {col.value}
+                  </View>
                 </View>
               ))}
             </View>

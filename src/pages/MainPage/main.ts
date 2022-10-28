@@ -1,4 +1,5 @@
 import Board from './grid';
+import type { GridAttribute } from './grid';
 
 class Main {
   size: number;
@@ -27,21 +28,22 @@ class Main {
     if (!this.board.cellEmpty()) {
       const value = Math.random() < 0.9 ? 2 : 4;
       const cell = this.board.selectCell();
-      cell.val = value;
+      cell.value = value;
+      cell.status = 'new';
       this.update(cell);
     }
   }
 
   /** 更新数据 */
   update(cell) {
-    this.board.grid[cell.x][cell.y] = cell.val;
+    this.board.grid[cell.pos[0]][cell.pos[1]] = cell;
   }
 
   move(dir) {
     // 0:上, 1:右, 2:下, 3:左
     const curList = this.formList(dir);
-    const list = this.combine(curList);
-    const result: number[][] = [[], [], [], []];
+    const list = this.combine(curList, dir);
+    const result: GridAttribute[][] = [[], [], [], []];
 
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
@@ -73,7 +75,7 @@ class Main {
 
   formList(dir) {
     // 根据滑动方向生成list的四个数组
-    const list: Array<Array<number | string>> = [[], [], [], []];
+    const list: GridAttribute[][] = [[], [], [], []];
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         switch (dir) {
@@ -97,39 +99,60 @@ class Main {
     return list;
   }
 
-  combine(list) {
+  combine(list: GridAttribute[][], dir: number) {
     // 滑动时相同的合并
     // 数字靠边
     for (let i = 0; i < list.length; i++) {
-      list[i] = this.changeItem(list[i]);
+      list[i] = this.changeItem(list[i], dir);
     }
 
     for (let i = 0; i < this.size; i++) {
       for (let j = 1; j < this.size; j++) {
-        if (list[i][j - 1] === list[i][j] && list[i][j] !== '') {
-          list[i][j - 1] += list[i][j];
-          list[i][j] = '';
+        if (list[i][j - 1].value === list[i][j].value && list[i][j].value !== '') {
+          (list[i][j - 1].value as number) += list[i][j].value as number;
+          list[i][j].value = '';
           this.changeTimes += 1;
         }
       }
     }
     // 再次数字靠边
     for (let i = 0; i < list.length; i++) {
-      list[i] = this.changeItem(list[i]);
+      list[i] = this.changeItem(list[i], dir);
     }
 
     return list;
   }
 
-  changeItem(item) {
+  changeItem(item: GridAttribute[], dir: number) {
     // 将 ['', 2, '', 2] 改为 [2, 2, '', '']
-    const res: Array<string | number> = [];
+    const res: GridAttribute[] = [];
     let cnt = 0;
-    for (let i = 0; i < item.length; i++) if (item[i] !== '') res[cnt++] = item[i];
-    for (let j = cnt; j < item.length; j++) res[j] = '';
+    for (let i = 0; i < item.length; i++) {
+      if (item[i].value !== '') {
+        switch (dir) {
+          case 0:
+            res[cnt++] = { pos: [item[i].pos[0], cnt], from: item[i].pos, value: item[i].value };
+            break;
+          case 1:
+            res[cnt++] = { pos: [this.size - 1 - cnt, item[i].pos[1]], from: item[i].pos, value: item[i].value };
+            break;
+          case 2:
+            res[cnt++] = { pos: [item[i].pos[0], this.size - 1 - cnt], from: item[i].pos, value: item[i].value };
+            break;
+          case 3:
+            res[cnt++] = { pos: [cnt, item[i].pos[1]], from: item[i].pos, value: item[i].value };
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    for (let j = cnt; j < item.length; j++) {
+      res[j] = { ...item[j], from: [-1, -1], value: '' };
+    }
 
-    res.forEach((num: string | number, index: number) => {
-      if (num !== item[index]) {
+    res.forEach((ele: GridAttribute, index: number) => {
+      if (ele.value !== item[index].value) {
         this.changeTimes += 1;
       }
     });

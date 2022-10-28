@@ -1,17 +1,24 @@
+export interface GridAttribute {
+  pos: [number, number];
+  from?: [number, number];
+  value: number | string;
+  status?: string;
+}
+
 class Board {
   size: number;
-  grid: Array<Array<number | string>>;
+  grid: GridAttribute[][];
   constructor(size) {
     this.size = size;
     this.grid = this.init();
   }
 
   init() {
-    const grid: Array<Array<number | string>> = [];
+    const grid: GridAttribute[][] = [];
     for (let i = 0; i < this.size; i++) {
       grid[i] = [];
       for (let j = 0; j < this.size; j++) {
-        grid[i].push('');
+        grid[i].push({ pos: [-1, -1], value: '' });
       }
     }
     return grid;
@@ -19,14 +26,13 @@ class Board {
 
   /** 记录空格子 */
   usefulCell() {
-    const cells: Array<{ x: number; y: number; val: number }> = [];
+    const cells: GridAttribute[] = [];
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        if (this.grid[i][j] === '') {
+        if (this.grid[i][j].value === '') {
           cells.push({
-            x: i,
-            y: j,
-            val: 0,
+            pos: [i, j],
+            value: -1,
           });
         }
       }
@@ -35,12 +41,12 @@ class Board {
   }
 
   /** 随机选择一个格子 */
-  selectCell() {
+  selectCell(): GridAttribute {
     const cells = this.usefulCell();
     if (cells.length) {
       return cells[Math.floor(Math.random() * cells.length)];
     }
-    return { val: 0 };
+    return { pos: [-1, -1], value: -1 };
   }
 
   /** 可用格子是否为空，为空返回true */
