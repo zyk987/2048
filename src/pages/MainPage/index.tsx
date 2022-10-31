@@ -57,6 +57,7 @@ function MainPage() {
         if (data[i][j].value !== '' && data[i][j].value > max) max = data[i][j].value as number;
       }
     }
+    console.log(data);
     setNum(data);
     setScore(max);
   };
@@ -67,6 +68,7 @@ function MainPage() {
     mainRef.current = main;
     setStart('重新开始');
     setOver(false);
+    console.log(main.board.grid);
     setNum(main.board.grid);
   };
 
@@ -106,8 +108,8 @@ function MainPage() {
                 <View
                   className={styles.col}
                   style={{
-                    top: `${(j + 1) * 20 + 140 * j}rpx`,
-                    left: `${(i + 1) * 20 + 140 * i}rpx`,
+                    top: `${(i + 1) * 20 + 140 * i}rpx`,
+                    left: `${(j + 1) * 20 + 140 * j}rpx`,
                   }}
                   key={`col${j}`}
                 >
@@ -116,6 +118,7 @@ function MainPage() {
                       [styles.cell]: true,
                       [styles[`cellTypeOf${col.value}`]]: true,
                       [styles.newCell]: col.status === 'new',
+                      [styles.combineCell]: col.status === 'combine',
                     })}
                   >
                     {col.value}

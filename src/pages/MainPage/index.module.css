@@ -94,10 +94,8 @@
   width: 140rpx;
   height: 140rpx;
   border-radius: 5px;
-
   box-sizing: border-box;
   background: rgba(238, 228, 218, 0.35);
-  overflow: hidden;
   position: absolute;
 }
 
@@ -107,6 +105,12 @@
   text-align: center;
   border-radius: 5px;
   line-height: 140rpx;
+  width: 140rpx;
+  height: 140rpx;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
 }
 @keyframes newCell {
   from {
@@ -126,6 +130,19 @@
 }
 .newCell {
   animation: newCell 0.3s;
+}
+@keyframes combineCell {
+  50% {
+    width: 160rpx;
+    height: 160rpx;
+  }
+  100% {
+    width: 140rpx;
+    height: 140rpx;
+  }
+}
+.combineCell {
+  animation: combineCell 0.2s;
 }
 .cellTypeOf2 {
   background: #eee4da;

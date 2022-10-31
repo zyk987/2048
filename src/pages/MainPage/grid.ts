@@ -5,6 +5,13 @@ export interface GridAttribute {
   status?: string;
 }
 
+const defaultAttribute: GridAttribute = {
+  pos: [-1, -1],
+  from: [-1, -1],
+  value: '',
+  status: undefined,
+};
+
 class Board {
   size: number;
   grid: GridAttribute[][];
@@ -18,7 +25,7 @@ class Board {
     for (let i = 0; i < this.size; i++) {
       grid[i] = [];
       for (let j = 0; j < this.size; j++) {
-        grid[i].push({ pos: [-1, -1], value: '' });
+        grid[i].push(defaultAttribute);
       }
     }
     return grid;
@@ -29,7 +36,7 @@ class Board {
     const cells: GridAttribute[] = [];
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        if (this.grid[i][j].value === '') {
+        if (this.grid[j][i].value === '') {
           cells.push({
             pos: [i, j],
             value: -1,
@@ -46,7 +53,7 @@ class Board {
     if (cells.length) {
       return cells[Math.floor(Math.random() * cells.length)];
     }
-    return { pos: [-1, -1], value: -1 };
+    return defaultAttribute;
   }
 
   /** 可用格子是否为空，为空返回true */

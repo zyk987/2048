@@ -36,7 +36,7 @@ class Main {
 
   /** 更新数据 */
   update(cell) {
-    this.board.grid[cell.pos[0]][cell.pos[1]] = cell;
+    this.board.grid[cell.pos[1]][cell.pos[0]] = cell;
   }
 
   move(dir) {
@@ -102,28 +102,28 @@ class Main {
   combine(list: GridAttribute[][], dir: number) {
     // 滑动时相同的合并
     // 数字靠边
-    for (let i = 0; i < list.length; i++) {
-      list[i] = this.changeItem(list[i], dir);
-    }
+    for (let i = 0; i < list.length; i++) list[i] = this.changeItem(list[i], dir, 0);
 
     for (let i = 0; i < this.size; i++) {
       for (let j = 1; j < this.size; j++) {
         if (list[i][j - 1].value === list[i][j].value && list[i][j].value !== '') {
-          (list[i][j - 1].value as number) += list[i][j].value as number;
+          list[i][j - 1] = {
+            ...list[i][j - 1],
+            value: Number(list[i][j - 1].value) + Number(list[i][j].value),
+            status: 'combine',
+          };
           list[i][j].value = '';
           this.changeTimes += 1;
         }
       }
     }
     // 再次数字靠边
-    for (let i = 0; i < list.length; i++) {
-      list[i] = this.changeItem(list[i], dir);
-    }
+    for (let i = 0; i < list.length; i++) list[i] = this.changeItem(list[i], dir, 1);
 
     return list;
   }
 
-  changeItem(item: GridAttribute[], dir: number) {
+  changeItem(item: GridAttribute[], dir: number, flag: number) {
     // 将 ['', 2, '', 2] 改为 [2, 2, '', '']
     const res: GridAttribute[] = [];
     let cnt = 0;
@@ -131,16 +131,37 @@ class Main {
       if (item[i].value !== '') {
         switch (dir) {
           case 0:
-            res[cnt++] = { pos: [item[i].pos[0], cnt], from: item[i].pos, value: item[i].value };
+            // console.log(item[i]);
+            res[cnt++] = {
+              ...item[i],
+              pos: [item[i].pos[0], cnt - 1],
+              from: flag ? item[i].from : item[i].pos,
+              status: flag ? item[i].status : 'move',
+            };
             break;
           case 1:
-            res[cnt++] = { pos: [this.size - 1 - cnt, item[i].pos[1]], from: item[i].pos, value: item[i].value };
+            res[cnt++] = {
+              ...item[i],
+              pos: [this.size - cnt, item[i].pos[1]],
+              from: flag ? item[i].from : item[i].pos,
+              status: flag ? item[i].status : 'move',
+            };
             break;
           case 2:
-            res[cnt++] = { pos: [item[i].pos[0], this.size - 1 - cnt], from: item[i].pos, value: item[i].value };
+            res[cnt++] = {
+              ...item[i],
+              pos: [item[i].pos[0], this.size - cnt],
+              from: flag ? item[i].from : item[i].pos,
+              status: flag ? item[i].status : 'move',
+            };
             break;
           case 3:
-            res[cnt++] = { pos: [cnt, item[i].pos[1]], from: item[i].pos, value: item[i].value };
+            res[cnt++] = {
+              ...item[i],
+              pos: [cnt - 1, item[i].pos[1]],
+              from: flag ? item[i].from : item[i].pos,
+              status: flag ? item[i].status : 'move',
+            };
             break;
           default:
             break;
@@ -148,7 +169,7 @@ class Main {
       }
     }
     for (let j = cnt; j < item.length; j++) {
-      res[j] = { ...item[j], from: [-1, -1], value: '' };
+      res[j] = { from: [-1, -1], value: '', status: undefined, pos: [-1, -1] };
     }
 
     res.forEach((ele: GridAttribute, index: number) => {
